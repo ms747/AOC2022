@@ -1,2 +1,7 @@
 **/main
 aoc_getinput.sh
+
+
+# Added by cargo
+
+/target

@@ -1,6 +1,6 @@
 #![feature(iter_array_chunks)]
 
-const INPUT: &str = include_str!("./input.txt");
+const INPUT: &str = include_str!("input3.txt");
 
 fn map_priority(ch: u8) -> usize {
     if ch >= b'a' {
@@ -12,6 +12,7 @@ fn map_priority(ch: u8) -> usize {
 
 fn main() {
     let it = std::time::Instant::now();
+
     let part1: usize = INPUT
         .lines()
         .map(|line| {
@@ -37,6 +38,7 @@ fn main() {
     println!("Part 1: {part1} took {:?}", it.elapsed());
 
     let it = std::time::Instant::now();
+
     let part2: usize = INPUT
         .lines()
         .array_chunks::<3>()

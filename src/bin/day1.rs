@@ -1,4 +1,4 @@
-const INPUT: &str = include_str!("./input.txt");
+const INPUT: &str = include_str!("input1.txt");
 
 fn main() {
     let mut data: Vec<u32> = INPUT

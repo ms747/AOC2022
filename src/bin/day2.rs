@@ -1,4 +1,4 @@
-const INPUT: &str = include_str!("./input.txt");
+const INPUT: &str = include_str!("input2.txt");
 
 #[derive(Debug, Eq, PartialEq, Clone)]
 enum Shape {
