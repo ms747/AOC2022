@@ -1,51 +1,32 @@
-use std::collections::HashSet;
-use std::iter::FromIterator;
-
-const fn create_char_array() -> [char; 52] {
-    let mut chars: [char; 52] = ['0'; 52];
-    let mut i = 0;
-
-    while i < 26 {
-        chars[i] = (b'a' + i as u8) as char;
-        i += 1;
-    }
-
-    i = 0;
-    while i < 26 {
-        chars[i + 26] = (b'A' + i as u8) as char;
-        i += 1;
-    }
-    chars
-}
+#![feature(iter_array_chunks)]
 
 const INPUT: &str = include_str!("./input.txt");
-const CHARS: [char; 52] = create_char_array();
+
+fn map_priority(ch: u8) -> usize {
+    if ch >= b'a' {
+        ch as usize - 96
+    } else {
+        ch as usize - 38
+    }
+}
 
 fn main() {
-    let inputs: Vec<&str> = INPUT.lines().collect();
-
-    let part1: usize = inputs
-        .iter()
+    let it = std::time::Instant::now();
+    let part1: usize = INPUT
+        .lines()
         .map(|line| {
-            let pivot = line.len() / 2;
-            let part1: HashSet<u8> = HashSet::from_iter(&mut line[..pivot].bytes());
-            let part2: HashSet<u8> = HashSet::from_iter(&mut line[pivot..].bytes());
-            let common = *part1.intersection(&part2).next().unwrap();
-            CHARS.iter().position(|c| c == &(common as char)).unwrap() + 1
-        })
-        .sum();
+            let (part1, part2) = line.split_at(line.len() / 2);
+            let mut occurences = [false; 53];
 
-    let part2: usize = inputs
-        .chunks(3)
-        .map(|chunk| {
-            let line1: HashSet<u8> = HashSet::from_iter(&mut chunk[0].bytes());
-            let line2: HashSet<u8> = HashSet::from_iter(&mut chunk[1].bytes());
-            let line3: HashSet<u8> = HashSet::from_iter(&mut chunk[2].bytes());
+            for ch1 in part1.bytes() {
+                let priority = map_priority(ch1);
+                occurences[priority] = true;
+            }
 
-            for ch in line1.intersection(&line2) {
-                if line3.contains(ch) {
-                    let position = CHARS.iter().position(|c| c == &(*ch as char)).unwrap() + 1;
-                    return position;
+            for ch2 in part2.bytes() {
+                let priority = map_priority(ch2);
+                if occurences[priority] {
+                    return priority;
                 }
             }
 
@@ -53,6 +34,38 @@ fn main() {
         })
         .sum();
 
-    println!("{part1:}");
-    println!("{part2:}");
+    println!("Part 1: {part1} took {:?}", it.elapsed());
+
+    let it = std::time::Instant::now();
+    let part2: usize = INPUT
+        .lines()
+        .array_chunks::<3>()
+        .map(|chunk| {
+            let mut occurences: [bool; 53] = [false; 53];
+            let mut occurences2: [bool; 53] = [false; 53];
+
+            for ch1 in chunk[0].bytes() {
+                let priority = map_priority(ch1);
+                occurences[priority] = true;
+            }
+
+            for ch2 in chunk[1].bytes() {
+                let priority = map_priority(ch2);
+                if occurences[priority] {
+                    occurences2[priority] = true;
+                }
+            }
+
+            for ch3 in chunk[2].bytes() {
+                let priority = map_priority(ch3);
+                if occurences2[priority] {
+                    return priority;
+                }
+            }
+
+            unreachable!();
+        })
+        .sum();
+
+    println!("Part 2: {part2} took {:?}", it.elapsed());
 }
