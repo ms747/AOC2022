@@ -24,7 +24,6 @@ const CHARS: [char; 52] = create_char_array();
 fn main() {
     let inputs: Vec<&str> = INPUT.lines().collect();
 
-    let it = std::time::Instant::now();
     let part1: usize = inputs
         .iter()
         .map(|line| {
@@ -35,9 +34,7 @@ fn main() {
             CHARS.iter().position(|c| c == &(common as char)).unwrap() + 1
         })
         .sum();
-    println!("{part1:} {:?}", it.elapsed());
 
-    let it = std::time::Instant::now();
     let part2: usize = inputs
         .chunks(3)
         .map(|chunk| {
@@ -56,5 +53,6 @@ fn main() {
         })
         .sum();
 
-    println!("{part2:} {:?}", it.elapsed());
+    println!("{part1:}");
+    println!("{part2:}");
 }
