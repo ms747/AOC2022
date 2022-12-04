@@ -38,11 +38,7 @@ fn main() {
     let part2 = input
         .iter()
         .filter(|(x1, y1, x2, y2)| {
-            let range_xy_contains_a = x1 >= x2 && x1 <= y2;
-            let range_xy_contains_b = y1 >= x2 && y1 <= y2;
-            let range_ab_contains_x = x2 >= x1 && y2 <= y1;
-            let range_ab_contains_y = y2 >= x1 && y2 <= y1;
-            range_xy_contains_a || range_xy_contains_b || range_ab_contains_x || range_ab_contains_y
+           !((y1 < x2) || (y2 < x1))
         })
         .count();
     println!("Part 2: {part2} took {:?}", it.elapsed());
