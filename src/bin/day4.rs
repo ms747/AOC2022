@@ -1,4 +1,4 @@
-use std::{cmp::Ordering::*, time::Instant};
+use std::time::Instant;
 
 const INPUT: &str = include_str!("input4.txt");
 
@@ -7,15 +7,15 @@ fn parse(line: &str) -> (i32, i32, i32, i32) {
         unreachable!();
     };
 
-    let (Some((a, b)), Some((x, y))) = (range1.split_once('-'), range2.split_once('-')) else {
+    let (Some((x1, y1)), Some((x2, y2))) = (range1.split_once('-'), range2.split_once('-')) else {
         unreachable!();
     };
 
-    let (Ok(a), Ok(b), Ok(x), Ok(y)) = (a.parse(), b.parse(), x.parse(), y.parse()) else {
+    let (Ok(x1), Ok(y1), Ok(x2), Ok(y2)) = (x1.parse(), y1.parse(), x2.parse(), y2.parse()) else {
         unreachable!();
     };
 
-    (a, b, x, y)
+    (x1, y1, x2, y2)
 }
 
 fn main() {
@@ -26,10 +26,10 @@ fn main() {
     let it = Instant::now();
     let part1 = input
         .iter()
-        .filter(|(a, b, x, y)| match (b - a).cmp(&(y - x)) {
-            Greater => (x - a) >= 0 && (b - y) >= 0,
-            Less => (a - x) >= 0 && (y - b) >= 0,
-            Equal => a == x && b == y,
+        .filter(|(x1, y1, x2, y2)| {
+            let range1 = x1 >= x2 && y1 <= y2;
+            let range2 = x2 >= x1 && y2 <= y1;
+            range1 || range2
         })
         .count();
     println!("Part 1: {part1} took {:?}", it.elapsed());
@@ -37,11 +37,11 @@ fn main() {
     let it = Instant::now();
     let part2 = input
         .iter()
-        .filter(|(a, b, x, y)| {
-            let range_xy_contains_a = a >= x && a <= y;
-            let range_xy_contains_b = b >= x && b <= y;
-            let range_ab_contains_x = x >= a && y <= b;
-            let range_ab_contains_y = y >= a && y <= b;
+        .filter(|(x1, y1, x2, y2)| {
+            let range_xy_contains_a = x1 >= x2 && x1 <= y2;
+            let range_xy_contains_b = y1 >= x2 && y1 <= y2;
+            let range_ab_contains_x = x2 >= x1 && y2 <= y1;
+            let range_ab_contains_y = y2 >= x1 && y2 <= y1;
             range_xy_contains_a || range_xy_contains_b || range_ab_contains_x || range_ab_contains_y
         })
         .count();
