@@ -37,9 +37,7 @@ fn main() {
     let it = Instant::now();
     let part2 = input
         .iter()
-        .filter(|(x1, y1, x2, y2)| {
-           !((y1 < x2) || (y2 < x1))
-        })
+        .filter(|(x1, y1, x2, y2)| !((y1 < x2) || (y2 < x1)))
         .count();
     println!("Part 2: {part2} took {:?}", it.elapsed());
 }
