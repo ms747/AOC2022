@@ -8,6 +8,7 @@ fn unique(chrs: &[u8], window_size: usize) -> bool {
             }
         }
     }
+
     true
 }
 
