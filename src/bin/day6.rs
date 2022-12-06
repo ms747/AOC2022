@@ -24,8 +24,7 @@ fn solve(chrs: &[u8], window_size: usize) -> usize {
 }
 
 fn main() {
-    let input = include_str!("input6.txt");
-    let input: Vec<u8> = input.bytes().collect();
+    let input = include_str!("input6.txt").as_bytes();
 
     let it = Instant::now();
     let part1 = solve(&input, 4);
