@@ -96,6 +96,7 @@ impl FileSystem {
             return;
         } else if dir == "/" {
             self.current_directory = &*self.root;
+            return;
         }
 
         let pwd = self.current_directory as *mut File;
@@ -163,7 +164,7 @@ fn main() {
 
     let part1: usize = dirs.iter().filter(|size| **size <= 100000).sum();
 
-    let total_space = 70000000;
+    let total_space= 70000000;
     let free_space = total_space - total_used_space;
     let part2 = dirs
         .into_iter()
