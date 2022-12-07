@@ -18,17 +18,17 @@ impl File {
         }
     }
 
-    fn touch(directory: *mut File, name: &'static str, size: usize) {
-        let directory = unsafe { &mut *directory };
+    fn touch(dir: *mut File, name: &'static str, size: usize) {
+        let pwd = unsafe { &mut *dir };
 
         let file = File {
             name,
-            parent: directory as *const _,
+            parent: dir as *const _,
             children: None,
             size,
         };
 
-        match &mut directory.children {
+        match &mut pwd.children {
             Some(children) => children.push(file),
             _ => unreachable!(),
         };
@@ -54,7 +54,7 @@ impl File {
 #[derive(Debug)]
 struct FileSystem {
     root: Box<File>,
-    current_directory: *const File,
+    current_dir: *const File,
 }
 
 impl FileSystem {
@@ -62,51 +62,51 @@ impl FileSystem {
         let root = Box::new(root);
 
         Self {
-            current_directory: &*root,
+            current_dir: &*root,
             root,
         }
     }
 
     fn touch(&mut self, name: &'static str, size: usize) {
-        if self.current_directory.is_null() {
+        if self.current_dir.is_null() {
             let pwd = &mut *self.root as *mut File;
             File::touch(pwd, name, size);
         } else {
-            let pwd = self.current_directory as *mut File;
+            let pwd = self.current_dir as *mut File;
             File::touch(pwd, name, size);
         }
     }
 
     fn mkdir(&mut self, name: &'static str) {
-        if self.current_directory.is_null() {
+        if self.current_dir.is_null() {
             let pwd = &mut *self.root as *mut File;
             File::mkdir(pwd, name);
         } else {
-            let pwd = self.current_directory as *mut File;
+            let pwd = self.current_dir as *mut File;
             File::mkdir(pwd, name);
         }
     }
 
     fn cd(&mut self, dir: &str) {
         if dir == ".." {
-            let pwd = unsafe { &*self.current_directory };
+            let pwd = unsafe { &*self.current_dir };
             if pwd.name != "/" {
-                self.current_directory = pwd.parent;
+                self.current_dir = pwd.parent;
             }
             return;
         } else if dir == "/" {
-            self.current_directory = &*self.root;
+            self.current_dir = &*self.root;
             return;
         }
 
-        let pwd = self.current_directory as *mut File;
+        let pwd = self.current_dir as *mut File;
         let pwd = unsafe { &mut *pwd };
 
         match &mut pwd.children {
             Some(pwd) => {
                 for (i, file) in pwd.iter().enumerate() {
                     if file.name == dir && file.size == 0 {
-                        self.current_directory = &pwd[i];
+                        self.current_dir = &pwd[i];
                     }
                 }
             }
